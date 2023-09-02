@@ -14,6 +14,7 @@
 
 <style>
     body {
+    color: white;
     font-family: 'Song Myung', sans-serif;
     text-align: center;
     display: flex;
@@ -22,7 +23,33 @@
     align-items: center; /* 가로 가운데 정렬 */
     height: 100vh; /* 뷰포트의 전체 높이 */
     word-break: keep-all;
+    overflow: hidden;
 }   
+
+.grayscale-bg {
+    background-image: url('./bg01.jpg');
+    filter: grayscale(100%); /* Convert image to black and white */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* adjust as necessary */
+    z-index: -1;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.6); /* black color with 50% opacity */
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center; /* 세로 가운데 정렬 */
+    align-items: center; /* 가로 가운데 정렬 */
+    word-break: keep-all;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+
+}
 
 #button {
         display: flex;
@@ -58,105 +85,26 @@
         font-size: 1.0rem; /* 버튼 폰트 크기 증가 */
     }
 
-    #attendanceCount {
+    #count {
         font-size: 1.8rem; /* 출석 수 폰트 크기 증가 */
     }
 }
 </style>
 
 <body>
-
+<div class="grayscale-bg">
+<div class="container">
 <h1>0902<br>나도 하나의 점입니다.</h1>
 <h2>삼가 고인의 명복을 빕니다.</h2>
 
-<div id="button" onclick="checkAttendance()">하나의 점 찍기.</div>
-<p id="attendanceCount">통계불러오는중</p>
+<div id="button">하나의 <br>점들이<br> 모여</div>
+<p id="count">204160개의 검은 점이 되고<br>
+남기지 못한 수많은 점들이 <br>함께 다녀갔습니다.</p>
 
-<h5>국회의사당역 기준 반경 1km에서만 체크됩니다.<br>
-    기기의 위치정보를 허용해주세요.<br>
-    기기당 1회만 체크해주세요.<br>
-중복방지를 위해 기기ID를 생성하여 수집합니다.<br>
-개인정보는 포함되지 않습니다.<br>
-<script>
-    // Firebase 설정
-    var firebaseConfig = {
-    apiKey: "AIzaSyBYAD1zG3lT9M4WXDZKDPZ2dIAuWK3GK64",
-    authDomain: "go-e659b.firebaseapp.com",
-    projectId: "go-e659b",
-    storageBucket: "go-e659b.appspot.com",
-    messagingSenderId: "66755136966",
-    appId: "1:66755136966:web:b4f5b8bdc0f190368476c7"
-        // 여기에 Firebase 프로젝트 설정을 복사 붙여넣기 합니다.
-    };
+<h5>2023년 9월 2일 토요일<br> 낮부터 밤 10시까지 집계하였습니다.<h5>
 
-    firebase.initializeApp(firebaseConfig);
-    var database = firebase.database();
-
-    // 기기 ID를 가져오거나 새로 생성합니다.
-    var deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-        deviceId = 'device_' + Date.now() + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('deviceId', deviceId);
-    }
-
-    // 출석 수를 가져와 페이지에 표시합니다.
-    database.ref('attendanceCount').on('value', function(snapshot) {
-        document.getElementById('attendanceCount').innerText = '' + (snapshot.val() || 0) + '개의 검은 점 ';
-    });
-
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var R = 6371; // 지구의 반지름 (km)
-        var dLat = deg2rad(lat2 - lat1);
-        var dLon = deg2rad(lon2 - lon1);
-        var a = 
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = R * c; // 거리 (km)
-        return d;
-    }
-
-    function deg2rad(deg) {
-        return deg * (Math.PI/180);
-    }
-
-
-    function checkAttendance() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lon = position.coords.longitude;
-
-                var targetLat = 37.527420524758384;
-                var targetLon = 126.91644412696769;
-                var distance = getDistanceFromLatLonInKm(lat, lon, targetLat, targetLon);
-
-                if (distance <= 1) {
-                    var deviceRef = database.ref('devices/' + deviceId);
-                    deviceRef.once('value').then(function(snapshot) {
-                        if (!snapshot.val()) {
-                            // 기기가 처음 체크하는 경우 출석 수를 증가시킵니다.
-                            database.ref('attendanceCount').transaction(function(count) {
-                                return (count || 0) + 1;
-                            });
-                            // 해당 기기의 출석을 기록합니다.
-                            deviceRef.set(true);
-                            alert('하나의 점이 더해졌습니다.');
-                        } else {
-                            alert('이 기기에서는 이미 확인하셨습니다. 더 이상 참여는 자제해주세요.');
-                        }
-                    });
-                } else {
-                    alert('출석 위치가 아닙니다.');
-                }
-            });
-        } else {
-            alert('위치 정보를 가져올 수 없습니다.');
-        }
-    }
-</script>
-
+</div>
+</div>
 <!-- 교사는 가르치고 싶다. 학생들은 배우고싶다. 공교육 정상화를 위한 우리의 외침 -->
 
 </body>
