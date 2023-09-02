@@ -14,7 +14,6 @@
 
 <style>
     body {
-    color: white;
     font-family: 'Song Myung', sans-serif;
     text-align: center;
     display: flex;
@@ -23,33 +22,7 @@
     align-items: center; /* 가로 가운데 정렬 */
     height: 100vh; /* 뷰포트의 전체 높이 */
     word-break: keep-all;
-    overflow: hidden;
 }   
-
-.grayscale-bg {
-    background-image: url('./bg01.jpg');
-    filter: grayscale(100%); /* Convert image to black and white */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh; /* adjust as necessary */
-    z-index: -1;
-}
-
-.container {
-    background-color: rgba(0, 0, 0, 0.6); /* black color with 50% opacity */
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-    justify-content: center; /* 세로 가운데 정렬 */
-    align-items: center; /* 가로 가운데 정렬 */
-    word-break: keep-all;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-
-}
 
 #button {
         display: flex;
@@ -85,25 +58,20 @@
         font-size: 1.0rem; /* 버튼 폰트 크기 증가 */
     }
 
-    #count {
+    #attendanceCount {
         font-size: 1.8rem; /* 출석 수 폰트 크기 증가 */
     }
 }
 </style>
 
 <body>
-<div class="grayscale-bg">
-<div class="container">
+
 <h1>0902<br>나도 하나의 점입니다.</h1>
 <h2>삼가 고인의 명복을 빕니다.</h2>
 
-<div id="button">하나의 <br>점들이<br> 모여</div>
-<p id="count">204160개의 검은 점이 되고<br>
-남기지 못한 수많은 점들이 <br>함께 다녀갔습니다.</p>
+<div id="button" onclick="checkAttendance()">하나의 점 찍기.</div>
+<p id="attendanceCount">통계불러오는중</p>
 
-<<<<<<< HEAD
-<h5>2023년 9월 2일 토요일<br> 낮부터 밤 10시까지 집계하였습니다.<h5>
-=======
 <h5>2023년 9월 2일 토요일 밤 10시까지 집계합니다.<br>국회의사당역 기준 반경 1km에서만 체크됩니다.<br>
     기기의 위치정보를 허용해주세요.<br>
     기기당 1회만 체크해주세요.<br>
@@ -188,10 +156,7 @@
         }
     }
 </script>
->>>>>>> d66c33332f0199a18623948e2b3649bf2ef36ee6
 
-</div>
-</div>
 <!-- 교사는 가르치고 싶다. 학생들은 배우고싶다. 공교육 정상화를 위한 우리의 외침 -->
 
 </body>
