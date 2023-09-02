@@ -68,7 +68,7 @@
 <p id="attendanceCount">0개의 검은 점</p>
 
 <h5>*위치정보를 허용해주세요.<br>
-중복방지를 위해 기기ID를 잠시 수집합니다.<br>
+중복방지를 위해 기기ID를 생성하여 수집합니다. 개인정보는 포함되지 않습니다.<br>
 나중에 기기ID는 삭제됩니다</h5>
 <script>
     // Firebase 설정
@@ -97,17 +97,35 @@
         document.getElementById('attendanceCount').innerText = '' + (snapshot.val() || 0) + '개의 검은 점 ';
     });
 
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // 지구의 반지름 (km)
+        var dLat = deg2rad(lat2 - lat1);
+        var dLon = deg2rad(lon2 - lon1);
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c; // 거리 (km)
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI/180);
+    }
+
+
     function checkAttendance() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
 
-                var targetLat = 37.1879;
-                var targetLon = 127.087;
-                var distance = Math.sqrt(Math.pow(lat - targetLat, 2) + Math.pow(lon - targetLon, 2));
+                var targetLat = 37.527420524758384;
+                var targetLon = 126.91644412696769;
+                var distance = getDistanceFromLatLonInKm(lat, lon, targetLat, targetLon);
 
-                if (distance < 0.1) {
+                if (distance <= 1) {
                     var deviceRef = database.ref('devices/' + deviceId);
                     deviceRef.once('value').then(function(snapshot) {
                         if (!snapshot.val()) {
